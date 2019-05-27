@@ -20,12 +20,16 @@ html,
 .App {
   height: 100%;
 }
-
-body {
-  background: #e3f4ff;
+.master {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
 }
-
 .sidebutton:hover {
   background: #111;
   cursor: pointer;
+}
+
+.widget {
+  padding: 2%;
+  background: #f1f1f1;
 }
