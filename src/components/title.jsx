@@ -28,9 +28,13 @@ export default class Title extends Component {
   widget = () => {
     if (!this.state.data) return null;
     return (
-      <h1 className="display-2 p-5 text-center">
-        {this.state.data.companyName}
-      </h1>
+      <div className="text-center">
+        <h1 className="display-2">{this.state.data.companyName}</h1>
+        <h2>CEO: {this.state.data.CEO}</h2>
+        <blockquote className="w-50 m-auto">
+          {this.state.data.description}
+        </blockquote>
+      </div>
     );
   };
 }

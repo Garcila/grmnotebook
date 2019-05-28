@@ -1,17 +1,62 @@
 import React, { Component } from "react";
+import Chart from "react-apexcharts";
 
 export default class Financials extends Component {
-  state = {};
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      options: {
+        chart: {},
+        yaxis: {
+          labels: {
+            formatter: function(value) {
+              return "$" + value.toLocaleString();
+            },
+            style: {
+              fontSize: "16px"
+            }
+          }
+        },
+        xaxis: {
+          categories: [{}],
+          labels: {
+            datetimeFormatter: {
+              year: "yyyy",
+              month: "MMM 'yy",
+              day: "dd MMM",
+              hour: "HH:mm"
+            },
+            style: {
+              fontSize: "16px"
+            }
+          }
+        },
+        title: {
+          text: "Gross Profit",
+          align: "center",
+          style: {
+            fontSize: "30px"
+          }
+        }
+      },
+      series: [
+        {
+          name: "Gross Profit",
+          data: [0, 0]
+        }
+      ]
+    };
+  }
   componentDidMount() {
     this.getData();
   }
   onProfileChange(profile) {
     this.getData();
   }
-
+  validateData(data) {
+    return data ? "$" + data.toLocaleString() : "N/A";
+  }
   getData() {
-    console.log("getting data");
     fetch(
       "https://api.iextrading.com/1.0/stock/" +
         this.props.companyId +
@@ -20,95 +65,42 @@ export default class Financials extends Component {
       .then(response => {
         return response.json();
       })
-      .then(data => {
-        this.setState({ data });
+      .then(indata => {
+        const grossProfit = [];
+        const dates = [];
+
+        for (let i = 0; i < indata.financials.length; i++) {
+          grossProfit.unshift(indata.financials[i].grossProfit);
+          dates.unshift(indata.financials[i].reportDate);
+        }
+
+        this.setState({
+          series: [
+            {
+              data: grossProfit
+            }
+          ],
+          options: {
+            xaxis: {
+              categories: dates
+            }
+          }
+        });
       });
   }
-  widget = () => {
-    //No data available return null else render widget
-    if (!this.state.data) return null;
-    return this.state.data.financials.map(item => (
-      <div key={item.reportDate} className="text-left widget m-1">
-        <h3>
-          <strong>Report Date</strong>
-        </h3>
-        <h4>{item.reportDate}</h4>
-        <br />
-        <p>
-          <strong>Gross Profit</strong>
-        </p>
-        <p>${item.grossProfit.toLocaleString()}</p>
-        <p>
-          <strong>Cost Of Revenue</strong>
-        </p>
-        <p>${item.costOfRevenue.toLocaleString()}</p>
-        <p>
-          <strong>Operating Revenue</strong>
-        </p>
-        <p>${item.operatingRevenue.toLocaleString()}</p>
-        <p>
-          <strong>Total Revenue</strong>
-        </p>
-        <p>${item.totalRevenue.toLocaleString()}</p>
-        <p>
-          <strong>Operating Income</strong>
-        </p>
-        <p>${item.operatingIncome.toLocaleString()}</p>
-        <p>
-          <strong>Net Income</strong>
-        </p>
-        <p>${item.netIncome.toLocaleString()}</p>
-        <p>
-          <strong>Research and Development</strong>
-        </p>
-        <p>${item.researchAndDevelopment.toLocaleString()}</p>
-        <p>
-          <strong>Operating Expense</strong>
-        </p>
-        <p>${item.operatingExpense.toLocaleString()}</p>
-        <p>
-          <strong>Current Assets</strong>
-        </p>
-        <p>${item.currentAssets.toLocaleString()}</p>
-        <p>
-          <strong>Total Assets</strong>
-        </p>
-        <p>${item.totalAssets.toLocaleString()}</p>
-        <p>
-          <strong>Total Liabilities</strong>
-        </p>
-        <p>${item.totalLiabilities.toLocaleString()}</p>
-        <p>
-          <strong>Current Cash</strong>
-        </p>
-        <p>${item.currentCash.toLocaleString()}</p>
-        <p>
-          <strong>Total Debt</strong>
-        </p>
-        <p>
-          ${item.totalDebt ? item.totalDebt.toLocaleString() : "unavailable"}
-        </p>
-        <p>
-          <strong>Shareholder Equity</strong>
-        </p>
-        <p>${item.shareholderEquity.toLocaleString()}</p>
-        <p>
-          <strong>Cash Change</strong>
-        </p>
-        <p>${item.cashChange.toLocaleString()}</p>
-        <p>
-          <strong>Cash Flow</strong>
-        </p>
-        <p>${item.cashFlow.toLocaleString()}</p>
-      </div>
-    ));
-  };
 
   render() {
     return (
       <React.Fragment>
         <h2>Financials</h2>
-        <div className="d-flex flex-wrap">{this.widget()}</div>
+        <Chart
+          options={this.state.options}
+          series={this.state.series}
+          type="line"
+          height="500"
+          width="100%"
+        />
+        {/* <div className="d-flex flex-wrap">{this.widget()}</div> */}
       </React.Fragment>
     );
   }

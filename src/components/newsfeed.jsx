@@ -14,7 +14,7 @@ export default class newsfeed extends Component {
   render() {
     return (
       <div style={this.style} className="m-0">
-        <h1 className="text-center pb-3 border-bottom border-primary">News</h1>
+        <h1 className="text-center pb-3 border-bottom border-primary" />
         {this.state.data}
       </div>
     );
@@ -49,6 +49,7 @@ export default class newsfeed extends Component {
 
   style = {
     width: "100%",
+    height: "100vh",
     overflow: "auto"
   };
 }

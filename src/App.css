@@ -22,7 +22,7 @@ html,
 }
 .master {
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-columns: 0.666fr 3fr 1fr;
 }
 .sidebutton:hover {
   background: #111;
